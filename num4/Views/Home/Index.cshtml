@@ -1,0 +1,129 @@
+﻿@model IEnumerable<num4.Models.User>
+@{
+    ViewData["Title"] = "Home Page";
+    ViewBag.TestVariable = "";
+}
+    
+<div class="text-center">
+
+    
+        <nav class="navbar navbar-light bg-light ">
+            <form class="form-inline" f method="post">
+                <a style="cursor: pointer;" id="Block" class="btn btn-outline-dark mr-sm-2">BLOCK</a>
+                <a style="cursor: pointer;" id="Unblock" class="btn btn-outline-success mr-sm-2"><span><img src="~/images/unlock.svg" /></span> UNBLOCK</a>
+                <a style="cursor: pointer;" id="Delete" class="btn btn-outline-danger mr-sm-2"><span><img src="~/images/user-x.svg" /></span> DELETE</a>
+
+            </form>
+        </nav>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr id="main-element">
+                    <th>
+                        <small>SELECT ALL / REMOVE ALL</small><br />
+                        <input id="main-checkbox" type="checkbox" value="" />
+                    </th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Date Register</th>
+                    <th scope="col">Date Last Login</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (var user in Model)
+                    {
+
+                        <tr id="element">
+                            <th><input id="secondary-checkbox" name="" type="checkbox" value="@user.Id" /></th>
+                            <th scope="row">@user.Id</th>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td>@user.RegistrationDate</td>
+                            <td>@user.LastLoginTime</td>
+                            <td>@user.Status</td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+
+
+
+</div>
+
+@section Scripts{ 
+    <script>
+
+        $(document).ready(function () {
+            //set initial state.
+            $("#Unblock").click(function () {
+                var array = [];
+                $("#secondary-checkbox:checked").each(function () {
+                    array.push($(this).val());
+                })
+                var ids = array.join(" ");
+                $.ajax({
+                    url: "/Home/Unblock",
+                    type: "GET",
+                    data: { users: ids },
+                    success: function (response) {
+                        window.location.href = response.redirectToUrl;
+                    },
+                    error: function (passParams) {
+                    }
+                });
+            });
+
+            $("#Block").click(function () {
+                var array = [];
+                $("#secondary-checkbox:checked").each(function () {
+                    array.push($(this).val());
+                })
+                var ids = array.join(" ");
+                $.ajax({
+                    url: "/Home/Block",
+                    type: "GET",
+                    data: { users: ids },
+                    success: function (response) {
+                        window.location.href = response.redirectToUrl;
+                    },
+                    error: function (passParams) {
+                    }
+                });
+            });
+
+            $("#Delete").click(function () {
+                var array = [];
+                $("#secondary-checkbox:checked").each(function () {
+                    array.push($(this).val());
+                })
+                var ids = array.join(" ");
+                $.ajax({
+                    url: "/Home/Delete",
+                    type: "GET",
+                    data: { users: ids },
+                    success: function (response) {
+                        window.location.href = response.redirectToUrl;
+                    },
+                    error: function (passParams) {
+                    }
+                });
+            });
+            $('#main-checkbox').change(function () {
+                if (this.checked) {
+                    var state = this.checked;
+                    $("input:checkbox").prop("checked", state);
+                } else if (!this.checked) {
+                    var state = this.checked;
+                    $("input:checkbox").prop("checked", state);
+                }
+
+            });
+        });
+
+    </script>
+}
